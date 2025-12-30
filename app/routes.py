@@ -1,4 +1,7 @@
+@ Author: Cid Kageno..
+# Don't change bellow anything...
 from flask import Blueprint, request, jsonify
+from flask_cors import cross_origin  # <--- 1. Import cross_origin
 from app.services.ai_service import get_gemini_response
 from app.services.sheet_service import save_interaction_background, get_fallback_answer
 import threading
@@ -6,6 +9,7 @@ import threading
 main = Blueprint('main', __name__)
 
 @main.route('/chat', methods=['POST'])
+@cross_origin() # <--- 2. Add this decorator to fix the CORS error
 def chat():
     user_input = request.json.get('message')
     
@@ -28,7 +32,7 @@ def chat():
 
         return jsonify({
             "response": ai_response,
-            "source": "Gemini_AI"
+            "source": "AI Response"
         })
 
     else:
@@ -39,6 +43,6 @@ def chat():
         
         return jsonify({
             "response": fallback_msg,
-            "source": "Sheet_Fallback"
+            "source": "Database"
         })
-      
+        
